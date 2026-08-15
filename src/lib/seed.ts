@@ -149,8 +149,8 @@ export function buildSeedState(now = Date.now()): WarehouseState {
     return {
       id: `inv-${i + 1}`,
       productId: p.id,
-      zone: ZONES[i % ZONES.length],
-      bin: `${ZONES[i % ZONES.length].slice(-1)}-${String(1 + (i % 9)).padStart(2, "0")}-${String(
+      zone: ZONES[i % ZONES.length]!,
+      bin: `${ZONES[i % ZONES.length]!.slice(-1)}-${String(1 + (i % 9)).padStart(2, "0")}-${String(
         1 + (i % 5),
       ).padStart(2, "0")}`,
       totalQty: total,
@@ -212,7 +212,7 @@ export function buildSeedState(now = Date.now()): WarehouseState {
 
   STAGE_PLAN.forEach(([stage, priority], idx) => {
     const orderId = `ord-${idx + 1}`;
-    const customer = customers[idx % customers.length];
+    const customer = customers[idx % customers.length]!;
     const createdAgo = (STAGE_PLAN.length - idx) * 6 * HOUR + Math.floor(rng() * 4 * HOUR);
     const promisedAgo = createdAgo - (idx % 5 === 0 ? -2 * HOUR : 48 * HOUR);
     const itemCount = 1 + Math.floor(rng() * 3);
@@ -223,7 +223,7 @@ export function buildSeedState(now = Date.now()): WarehouseState {
       let pi = Math.floor(rng() * products.length);
       while (usedProducts.has(pi)) pi = (pi + 1) % products.length;
       usedProducts.add(pi);
-      const product = products[pi];
+      const product = products[pi]!;
       const requested = 2 + Math.floor(rng() * 10);
       value += requested * product.price;
       items.push({
@@ -277,7 +277,7 @@ export function buildSeedState(now = Date.now()): WarehouseState {
 
     // Picking task
     if (s >= 2) {
-      const picker = workers.filter((w) => w.role === "Picker")[idx % 4];
+      const picker = workers.filter((w) => w.role === "Picker")[idx % 4]!;
       const taskItems: PickingTaskItem[] = items.map((it, k) => {
         const inv = inventory.find((iv) => iv.productId === it.productId)!;
         return {
@@ -305,7 +305,7 @@ export function buildSeedState(now = Date.now()): WarehouseState {
       if (s > 2) {
         // Picking finished: consume reserved stock; inject a damaged/missing case.
         taskItems.forEach((ti, k) => {
-          const it = items[k];
+          const it = items[k]!;
           const inv = inventory.find((iv) => iv.productId === ti.productId)!;
           let picked = ti.requiredQty;
           const incidentRoll = (idx + k) % 9;
@@ -358,7 +358,7 @@ export function buildSeedState(now = Date.now()): WarehouseState {
 
     // Packing task
     if (s >= 3) {
-      const packer = workers.filter((w) => w.role === "Packer")[idx % 2];
+      const packer = workers.filter((w) => w.role === "Packer")[idx % 2]!;
       const pkgCount = 1 + Math.floor(rng() * 3);
       const done = s > 3;
       packingTasks.push({
@@ -380,7 +380,7 @@ export function buildSeedState(now = Date.now()): WarehouseState {
 
     // QC
     if (s >= 4) {
-      const inspector = workers.filter((w) => w.role === "QC Inspector")[idx % 2];
+      const inspector = workers.filter((w) => w.role === "QC Inspector")[idx % 2]!;
       if (s > 4) {
         qualityChecks.push({
           id: `qcr-${orderId}`,
@@ -449,8 +449,8 @@ export function buildSeedState(now = Date.now()): WarehouseState {
 
   // One resolved exception for history.
   addException(30 * HOUR, {
-    orderId: orders[19].id,
-    productId: products[4].id,
+    orderId: orders[19]!.id,
+    productId: products[4]!.id,
     type: "Quantity Mismatch",
     severity: "Medium",
     description: "Cycle count found a 3 unit variance against system quantity.",
