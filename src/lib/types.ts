@@ -105,7 +105,7 @@ export interface PickingTaskItem {
   requiredQty: number;
   pickedQty: number;
   status: PickItemStatus;
-  notes?: string;
+  notes?: string | undefined;
 }
 
 export interface PickingTask {
@@ -117,7 +117,7 @@ export interface PickingTask {
   status: TaskStatus;
   startedAt: string | null;
   completedAt: string | null;
-  notes?: string;
+  notes?: string | undefined;
   items: PickingTaskItem[];
 }
 
@@ -131,7 +131,7 @@ export interface PackingTask {
   status: TaskStatus;
   startedAt: string | null;
   completedAt: string | null;
-  notes?: string;
+  notes?: string | undefined;
 }
 
 export interface QualityCheck {
@@ -139,7 +139,7 @@ export interface QualityCheck {
   orderId: string;
   inspectorId: string | null;
   result: "Passed" | "Failed";
-  notes?: string;
+  notes?: string | undefined;
   timestamp: string;
 }
 
@@ -162,7 +162,7 @@ export interface WarehouseException {
   severity: ExceptionSeverity;
   description: string;
   status: ExceptionStatus;
-  resolutionNotes?: string;
+  resolutionNotes?: string | undefined;
   createdAt: string;
   updatedAt: string;
 }
