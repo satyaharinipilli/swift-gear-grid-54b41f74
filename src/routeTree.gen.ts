@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DispatchRouteImport } from './routes/dispatch'
+import { Route as ExceptionsRouteImport } from './routes/exceptions'
 import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as PickingRouteImport } from './routes/picking'
 import { Route as OrdersIndexRouteImport } from './routes/orders.index'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const DispatchRoute = DispatchRouteImport.update({
   id: '/dispatch',
   path: '/dispatch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExceptionsRoute = ExceptionsRouteImport.update({
+  id: '/exceptions',
+  path: '/exceptions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InventoryRoute = InventoryRouteImport.update({
@@ -50,6 +56,7 @@ const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dispatch': typeof DispatchRoute
+  '/exceptions': typeof ExceptionsRoute
   '/inventory': typeof InventoryRoute
   '/picking': typeof PickingRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dispatch': typeof DispatchRoute
+  '/exceptions': typeof ExceptionsRoute
   '/inventory': typeof InventoryRoute
   '/picking': typeof PickingRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dispatch': typeof DispatchRoute
+  '/exceptions': typeof ExceptionsRoute
   '/inventory': typeof InventoryRoute
   '/picking': typeof PickingRoute
   '/orders/$orderId': typeof OrdersOrderIdRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dispatch'
+    | '/exceptions'
     | '/inventory'
     | '/picking'
     | '/orders/$orderId'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dispatch'
+    | '/exceptions'
     | '/inventory'
     | '/picking'
     | '/orders/$orderId'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dispatch'
+    | '/exceptions'
     | '/inventory'
     | '/picking'
     | '/orders/$orderId'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DispatchRoute: typeof DispatchRoute
+  ExceptionsRoute: typeof ExceptionsRoute
   InventoryRoute: typeof InventoryRoute
   PickingRoute: typeof PickingRoute
   OrdersOrderIdRoute: typeof OrdersOrderIdRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/dispatch'
       fullPath: '/dispatch'
       preLoaderRoute: typeof DispatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exceptions': {
+      id: '/exceptions'
+      path: '/exceptions'
+      fullPath: '/exceptions'
+      preLoaderRoute: typeof ExceptionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/inventory': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DispatchRoute: DispatchRoute,
+  ExceptionsRoute: ExceptionsRoute,
   InventoryRoute: InventoryRoute,
   PickingRoute: PickingRoute,
   OrdersOrderIdRoute: OrdersOrderIdRoute,
