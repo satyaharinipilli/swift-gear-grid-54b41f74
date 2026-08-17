@@ -282,7 +282,7 @@ export function startPickingTask(taskId: string): ActionResult {
 export function recordPickItem(
   taskId: string,
   itemId: string,
-  payload: { status: "Picked" | "Partial" | "Missing" | "Damaged"; quantity: number; notes?: string },
+  payload: { status: "Picked" | "Partial" | "Missing" | "Damaged"; quantity: number; notes?: string | undefined },
 ): ActionResult {
   let result: ActionResult = { ok: false, message: "Pick line not found." };
   setState((d) => {
