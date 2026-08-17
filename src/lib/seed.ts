@@ -214,7 +214,8 @@ export function buildSeedState(now = Date.now()): WarehouseState {
     const orderId = `ord-${idx + 1}`;
     const customer = customers[idx % customers.length]!;
     const createdAgo = (STAGE_PLAN.length - idx) * 6 * HOUR + Math.floor(rng() * 4 * HOUR);
-    const promisedAgo = createdAgo - (idx % 5 === 0 ? -2 * HOUR : 48 * HOUR);
+    // Most orders are promised in the future; a few are intentionally overdue.
+    const promisedAgo = idx % 6 === 0 ? 5 * HOUR : -((18 + idx * 3) * HOUR);
     const itemCount = 1 + Math.floor(rng() * 3);
     const usedProducts = new Set<number>();
     let value = 0;
