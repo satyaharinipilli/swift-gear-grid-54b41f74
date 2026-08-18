@@ -704,3 +704,72 @@ export function setOrderPriority(orderId: string, priority: Priority): ActionRes
   });
   return result;
 }
+
+/* ----------------------------- Receive stock ----------------------------- */
+
+export function receiveStock(input: {
+  productId: string;
+  quantity: number;
+  zone: string;
+  bin: string;
+  note?: string;
+}): ActionResult {
+  let result: ActionResult = { ok: false, message: "Unable to receive stock." };
+  setState((d) => {
+    const product = d.products.find((p) => p.id === input.productId);
+    if (!product) {
+      result = { ok: false, message: "Select a product." };
+      return;
+    }
+    const qty = Math.floor(input.quantity);
+    if (!Number.isFinite(qty) || qty <= 0) {
+      result = { ok: false, message: "Quantity received must be greater than zero." };
+      return;
+    }
+    if (!input.zone.trim() || !input.bin.trim()) {
+      result = { ok: false, message: "Zone and bin are required." };
+      return;
+    }
+    let inv = d.inventory.find((iv) => iv.productId === input.productId);
+    if (!inv) {
+      inv = {
+        id: uid("inv"),
+        productId: input.productId,
+        zone: input.zone.trim(),
+        bin: input.bin.trim(),
+        totalQty: 0,
+        reservedQty: 0,
+        damagedQty: 0,
+      };
+      d.inventory.push(inv);
+    }
+    const before = availableQty(inv);
+    inv.zone = input.zone.trim();
+    inv.bin = input.bin.trim();
+    inv.totalQty += qty;
+    const after = availableQty(inv);
+    pushActivity(d, {
+      actor: actor(d),
+      action: "Stock Received",
+      entity: product.sku,
+      description: `${qty} unit(s) of ${product.name} received into ${inv.zone} · ${inv.bin}. Available ${before} → ${after}.${
+        input.note?.trim() ? ` Note: ${input.note.trim()}` : ""
+      }`,
+    });
+    result = { ok: true, message: `${qty} unit(s) of ${product.name} received — ${after} available.` };
+  });
+  return result;
+}
+
+/* -------------------------- Decision simulator --------------------------- */
+
+export function logDecision(entry: { entity: string; action: string; description: string }): void {
+  setState((d) => {
+    pushActivity(d, {
+      actor: actor(d),
+      action: entry.action,
+      entity: entry.entity,
+      description: entry.description,
+    });
+  });
+}
